@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rango.models import Category,Page
 from rango.forms import CategoryForm,PageForm
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 
 # Create your views here.
 
@@ -22,6 +24,11 @@ def index(request):
 
 def about(request):
     #return HttpResponse("Rango says here is the about page. <a href='/rango/'>View index page</a>")
+
+    # prints out whether the method is a GET or a POST
+    print(request.method)
+    # prints out the user name, if no one is logged in it prints `AnonymousUser`
+    print(request.user)
     return render(request, 'rango/about.html', {})
 
 
@@ -97,3 +104,37 @@ def add_page(request, category_name_slug):
             print(form.errors)
     context_dict = {'form':form, 'category': category}
     return render(request, 'rango/add_page.html', context_dict)
+
+def show_category(request, category_name_slug):
+    context_dict = {}
+
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+        pages = Page.objects.filter(category=category)
+        context_dict['pages'] = pages
+        context_dict['category'] = category
+    except Category.DoesNotExist:
+        context_dict['category'] = None
+        context_dict['pages'] = None
+
+    return render(request, 'rango/category.html', context_dict)
+
+def get_category_list(cat=None):
+    return {'cats': Category.objects.all(),'act_cat': cat}
+
+def track_url(request):
+    page_id = None
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+    if page_id:
+        try:
+            page = Page.objects.get(id=page_id)
+            page.views = page.views + 1
+            page.save()
+            return redirect(page.url)
+        except:
+            return HttpResponse("Page id {0} not found".format(page_id))
+    print("No page_id in get string")
+    return redirect(reverse('index'))
+
