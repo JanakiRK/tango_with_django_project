@@ -8,7 +8,12 @@
 
 	<div>
 		<h1 class="display-3">Rango says...</h1>
-			<p class="lead">hey there partner! </p>
+			<p class="lead">{% if user.is_authenticated %}
+								howdy {{ user.username }}!
+							{% else %}
+								hey there partner!
+							{% endif %}
+			</p>
  	</div>
 
 		<div class="row marketing">
@@ -21,6 +26,7 @@
 		                 	<li class="list-group-item"><a href="{% url 'show_category' category.slug %}">{{ category.name }}</a></li>
 		                 {% endfor %}
 		             </ul>
+
 		        {% else %}
 		             <strong>There are no categories present.</strong>
 		        {% endif %}
@@ -30,6 +36,7 @@
 			</div>
 			<div class="col-lg-6">
 				<h4>Most Viewed Pages</h4>
+
 				<p>
 				{% if pages %}
 				<ul class="list-group">
@@ -37,6 +44,7 @@
 				 <li class="list-group-item"><a href="{% url 'goto' %}?page_id={{page.id}}"\>{{ page.title }}</a></li>
 				 {% endfor %}
 				 </ul>
+
 				{% else %}
 				<strong>There are no categories present.</strong>
 			 {% endif %}

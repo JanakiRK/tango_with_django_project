@@ -1,38 +1,29 @@
 {% extends 'rango/base.html' %}
 	{% load staticfiles %}
 	{% block title_block %}
-		Add Page
+		Add Category
 	{% endblock %}
 
 	{% block body_block %}
-        <div>
-		{% if category %}
+		<div>
+			<h1>Add a Category</h1>
+			<form role="form" id="category_form" method="post" action="{% url 'add_category' %}">
+				{% csrf_token %}
+				{% for hidden in form.hidden_fields %}
+	                {{ hidden }}
+	            {% endfor %}
 
-        <h1>Add a Page to {{category.name}}</h1>
+	            {% for field in form.visible_fields %}
+	                {{ field.errors }}
+	                {{ field.help_text }}
+	                {{ field }}
+	            {% endfor %}
 
-        <form id="page_form" method="post" action="/rango/category/{{ category.slug }}/add_page/">
-
-            {% csrf_token %}
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
-
-            {% for field in form.visible_fields %}
-                {{ field.errors }}
-                {{ field.help_text }}
-                {{ field }}
-            {% endfor %}
-
-            <input type="submit" name="submit" value="Add Page" />
-        </form>
-
-		{% else %}
-			The specified category does not exist!
-		{% endif%}
+				<button class="btn btn-primary" type="submit" name="submit">Create Category</button>
+	        </form>
 		</div>
 
-	{% endblock %}
-
+	{% endblock %}x
 
 <!--This is till pre-chapter 8
 
