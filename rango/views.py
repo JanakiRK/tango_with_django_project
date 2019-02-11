@@ -46,10 +46,11 @@ def about(request):
     if request.session.test_cookie_worked():
         print("TEST COOKIE WORKED!")
         request.session.delete_test_cookie()
-        context_dict={}
-        visitor_cookie_handler(request)
-        context_dict['visits'] = request.session['visits']
-        print(request.session['visits'])
+
+    print(request.method)
+    print(request.user)
+    visitor_cookie_handler(request)
+    context_dict={'visits':request.session['visits']}
     return render(request, 'rango/about.html', context=context_dict)
 
 
@@ -294,7 +295,6 @@ def visitor_cookie_handler(request):
         #update the last visit cookie now that we have updated the count
         request.session['last_visit'] = str(datetime.now())
     else:
-        visits = 1
         # set the last visit cookie
         request.session['last_visit'] = last_visit_cookie
     # update/set the visits cookie
